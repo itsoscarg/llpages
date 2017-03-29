@@ -4,6 +4,7 @@ const favicon       = require('serve-favicon');
 const logger        = require('morgan');
 const cookieParser  = require('cookie-parser');
 const bodyParser    = require('body-parser');
+var cors = require('cors');
 const layouts       = require('express-ejs-layouts');
 const mongoose      = require('mongoose');
 const session       = require("express-session");
@@ -13,6 +14,11 @@ const LocalStrategy = require("passport-local").Strategy;
 const User          = require('./models/user.js');
 const ensureLogin   = require("connect-ensure-login");
 const flash         = require("connect-flash");
+var users = require('./routes/users');
+require('./configs/database');
+var bidsApi = require('./routes/bids-api');
+
+// mongoose.connect(process.env.MONGODB_URI);
 
 mongoose.connect('mongodb://localhost/llpages');
 
@@ -33,6 +39,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(layouts);
+app.use(cors());
 //express-session config
 app.use(session({
   secret: "our-passport-local-strategy-app",
@@ -90,6 +97,9 @@ app.use('/', index);
 
 const authRoutes = require('./routes/auth-routes');
 app.use('/', authRoutes);
+
+app.use('/users', users);
+app.use('/api', bidsApi);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
