@@ -46,6 +46,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
 app.use(flash());
 
 passport.use(new LocalStrategy((username, password, next) => {
@@ -100,6 +101,10 @@ app.use('/', authRoutes);
 
 app.use('/users', users);
 app.use('/api', bidsApi);
+
+app.use(function(req, res) {
+  res.sendfile(__dirname + '/public/index.html');
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
